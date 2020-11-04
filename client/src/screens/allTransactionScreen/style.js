@@ -7,10 +7,10 @@ const height = Dimensions.get('window').height;
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    //justifyContent: 'flex-start',
+    justifyContent: 'flex-start',
     backgroundColor: color.white,
     padding: 20,
-    //paddingTop: 0,
+    paddingTop: 0,
     paddingBottom: 0,
   },
   top: {
@@ -51,7 +51,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    //arginTop: 30,
+    marginTop: 30,
     marginBottom: 10,
   },
   buttonLeft: {
@@ -85,9 +85,5 @@ export const styles = StyleSheet.create({
   boxBtn: {
     flexDirection: 'row',
     marginTop: 10,
-  },
-  shadowContainer: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: '#000',
   },
 });

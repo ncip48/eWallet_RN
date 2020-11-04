@@ -18,9 +18,10 @@ const {
   getTransactionById,
   makeTransaction,
   topUpGojek,
+  topUpStore,
 } = require("../controller/transaction");
 
-const { getNotification } = require("../controller/notification");
+const { getNotification, handling } = require("../controller/notification");
 
 const { authenticated } = require("../middleware/authentication");
 
@@ -39,9 +40,11 @@ router.get("/transaction/:id", authenticated, detailTransaction);
 router.get("/transaction-user/:id", authenticated, getTransactionById);
 router.post("/transaction", authenticated, makeTransaction);
 
-router.post("/test-midtrans", authenticated, topUpGojek);
+router.post("/topup-gopay", authenticated, topUpGojek);
+router.post("/test-midtrans-2", authenticated, topUpStore);
 
 router.get("/notification", authenticated, getNotification);
+router.post("/notification/handling", handling);
 
 router
   .get("*", function (req, res) {

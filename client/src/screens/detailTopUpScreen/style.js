@@ -7,11 +7,10 @@ const height = Dimensions.get('window').height;
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    //justifyContent: 'flex-start',
-    backgroundColor: color.white,
+    justifyContent: 'flex-start',
+    backgroundColor: color.primary,
     padding: 20,
-    //paddingTop: 0,
-    paddingBottom: 0,
+    paddingTop: 0,
   },
   top: {
     color: color.black,
@@ -20,28 +19,48 @@ export const styles = StyleSheet.create({
     fontFamily: 'SFPro-SemiBold',
   },
   box: {
-    width: width - 40,
-    height: width / 3,
-    backgroundColor: color.primary,
-    borderRadius: 12,
-    justifyContent: 'space-between',
+    width: width / 4,
+    height: width / 4,
+    backgroundColor: color.white,
+    borderRadius: width / 4 / 2,
+    justifyContent: 'center',
     alignItems: 'center',
-    padding: 25,
-    flexDirection: 'row',
+    borderColor: color.green,
+    borderWidth: 3,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop: width / 10,
   },
-  saldo: {
-    fontSize: 34,
+  txtInfo: {
+    fontSize: 24,
     fontFamily: 'SFPro-Bold',
-    color: color.white,
-    //marginBottom: 10,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop: 5,
+    color: color.green,
+    marginBottom: width / 10,
+  },
+  txtDate: {
+    fontSize: 14,
+    fontFamily: 'SFPro-Light',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    color: color.black,
+  },
+  ammount: {
+    fontSize: 24,
+    fontFamily: 'SFPro-Bold',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    color: color.black,
   },
   balance: {
     fontSize: 16,
     color: color.white,
     fontFamily: 'SFPro-Regular',
   },
-  txtRecent: {
-    //marginTop: 50,
+  txtDetail: {
+    marginTop: 20,
     fontFamily: 'SFPro-SemiBold',
     color: color.black,
     fontSize: 16,
@@ -51,7 +70,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    //arginTop: 30,
+    marginTop: 30,
     marginBottom: 10,
   },
   buttonLeft: {
@@ -64,7 +83,7 @@ export const styles = StyleSheet.create({
     marginRight: 5,
   },
   buttonRight: {
-    backgroundColor: color.white,
+    backgroundColor: color.secondary,
     height: 60,
     borderRadius: 12,
     width: width / 2 - 25,
@@ -77,17 +96,8 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: 'SFPro-Bold',
   },
-  btnTextRight: {
-    color: color.primary,
-    fontSize: 20,
-    fontFamily: 'SFPro-Bold',
-  },
   boxBtn: {
     flexDirection: 'row',
     marginTop: 10,
-  },
-  shadowContainer: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: '#000',
   },
 });

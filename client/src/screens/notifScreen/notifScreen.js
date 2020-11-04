@@ -12,10 +12,13 @@ import {UserContext} from '../../context/userContext';
 import {API} from '../../config/api';
 import BottomSheet from 'reanimated-bottom-sheet';
 import {useIsDrawerOpen} from '@react-navigation/drawer';
+import Animated from 'react-native-reanimated';
 
 function currencyFormat(num) {
   return num.toFixed().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
 }
+
+const AnimatedView = Animated.View;
 
 export const notifScreen = (props) => {
   const navigation = useNavigation();
@@ -24,6 +27,7 @@ export const notifScreen = (props) => {
   const user = JSON.parse(state.user);
   const sheetRef = useRef(null);
   const isDrawerOpen = useIsDrawerOpen();
+  let fall = new Animated.Value(1);
 
   const {isLoading, data: notifData, refetch} = useQuery(
     'getNotification',
@@ -58,18 +62,37 @@ export const notifScreen = (props) => {
     );
   };
 
+  const renderShadow = () => {
+    const animatedShadowOpacity = Animated.interpolate(fall, {
+      inputRange: [0, 1],
+      outputRange: [0.5, 0],
+    });
+
+    return (
+      <AnimatedView
+        pointerEvents="none"
+        style={[
+          styles.shadowContainer,
+          {
+            opacity: animatedShadowOpacity,
+          },
+        ]}
+      />
+    );
+  };
+
   const renderSheetDialog = (data) => (
     <View>
       <View
         style={{
-          backgroundColor: 'grey',
+          backgroundColor: color.triple,
           alignItems: 'center',
           height: 20,
           justifyContent: 'center',
         }}>
         <View
           style={{
-            backgroundColor: color.white,
+            backgroundColor: color.primary,
             height: 6,
             width: '10%',
             borderRadius: 6,
@@ -78,12 +101,19 @@ export const notifScreen = (props) => {
       </View>
       <View
         style={{
-          backgroundColor: 'grey',
+          backgroundColor: color.triple,
           height: 200,
           justifyContent: 'center',
           alignItems: 'center',
         }}>
-        <Text>{detail.body}</Text>
+        <Text
+          style={{
+            textAlign: 'center',
+            fontFamily: 'SFPro-Regular',
+            fontSize: 16,
+          }}>
+          {detail.body}
+        </Text>
       </View>
     </View>
   );
@@ -129,12 +159,14 @@ export const notifScreen = (props) => {
             showsVerticalScrollIndicator={false}
           />
         )}
+        {renderShadow()}
       </View>
       <BottomSheet
         initialSnap={1}
         ref={sheetRef}
         snapPoints={[220, 0, 0]}
         borderRadius={20}
+        callbackNode={fall}
         //renderHeader={renderHeader}
         renderContent={renderSheetDialog}
         enabledManualSnapping={false}

@@ -16,7 +16,7 @@ function currencyFormat(num) {
   return num.toFixed().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
 }
 
-export const homeScreen = (props) => {
+export const allTransactionScreen = (props) => {
   const navigation = useNavigation();
   const [show, setShow] = useState(false);
   const [state, dispatch] = useContext(UserContext);
@@ -24,15 +24,9 @@ export const homeScreen = (props) => {
 
   const isDrawerOpen = useIsDrawerOpen();
 
-  const {
-    isLoading: loadingProfile,
-    data: userData,
-    refetch: refetchProfile,
-  } = useQuery('getUserProfile', () => API.get(`/user/${user.id}`));
-
   const {isLoading, data: transactionData, refetch} = useQuery(
     'getTransaction',
-    () => API.get(`/transaction-user/${user.id}`),
+    () => API.get(`/transaction-user/${user.id}?limit=100`),
   );
 
   const renderItem = ({item}) => {
@@ -83,7 +77,7 @@ export const homeScreen = (props) => {
       />
       <Header
         centerComponent={{
-          text: 'e-wallet',
+          text: 'All Transactions',
           style: {
             color: color.black,
             fontSize: 28,
@@ -103,50 +97,6 @@ export const homeScreen = (props) => {
         containerStyle={{backgroundColor: color.white}}
       />
       <View style={styles.container}>
-        {/* <Text style={styles.top}>Account Overview</Text> */}
-        <View style={styles.box}>
-          <View
-            style={{
-              height: '100%',
-              justifyContent: 'space-around',
-            }}>
-            <Text style={styles.saldo}>
-              {loadingProfile
-                ? 'loading...'
-                : currencyFormat(userData.data.data.user.saldo)}
-            </Text>
-            <Text style={styles.balance}>Current balance</Text>
-          </View>
-          <Icon
-            type="ionicon"
-            name="reload-circle-sharp"
-            size={40}
-            color={color.white}
-            onPress={refetchProfile}
-          />
-        </View>
-        <View style={styles.boxBtn}>
-          <Button
-            style={styles.buttonLeft}
-            onPress={() => navigation.navigate('send')}>
-            <Text style={styles.btnText}>Send</Text>
-          </Button>
-          <Button
-            style={styles.buttonRight}
-            onPress={() => navigation.navigate('topup')}>
-            <Text style={styles.btnTextRight}>Topup</Text>
-          </Button>
-        </View>
-        <View style={styles.boxRecent}>
-          <Text style={styles.txtRecent}>RECENT TRANSACTIONS</Text>
-          <Icon
-            type="ionicon"
-            name="reload-circle-sharp"
-            size={30}
-            color={color.primary}
-            onPress={refetch}
-          />
-        </View>
         {isLoading ? (
           <Text>Loading...</Text>
         ) : (

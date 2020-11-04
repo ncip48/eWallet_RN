@@ -21,6 +21,12 @@ module.exports = (sequelize, DataTypes) => {
           name: "userId",
         },
       });
+      User.hasMany(models.Topup, {
+        as: "topup",
+        foreignKey: {
+          name: "userId",
+        },
+      });
     }
   }
   User.init(

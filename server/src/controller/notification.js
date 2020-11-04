@@ -39,3 +39,7 @@ exports.getNotification = async (req, res) => {
     });
   }
 };
+
+exports.handling = async (req, res) => {
+  console.log(req.body);
+};

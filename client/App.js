@@ -23,6 +23,9 @@ import {
   detailTransaction,
   detailTransactionSend,
   sendScreen,
+  allTransactionScreen,
+  topUpScreen,
+  detailTopUpScreen,
 } from './src/screens';
 import {LogBox, StatusBar, Text, View} from 'react-native';
 import _ from 'lodash';
@@ -33,6 +36,8 @@ import {UserContext} from './src/context/userContext';
 import {urlAsset} from './src/config/api';
 
 LogBox.ignoreLogs(['Setting a timer']);
+// console.disableYellowBox = true;
+LogBox.ignoreAllLogs();
 
 const Stack = createStackNavigator();
 const AnimatedContext = createContext(void 0);
@@ -223,7 +228,7 @@ const DrawerStack = () => {
                 />
               ),
             }}
-            component={withFancyDrawer(homeScreen)}
+            component={withFancyDrawer(allTransactionScreen)}
           />
           <Drawer.Screen
             name="Rewards & Offers"
@@ -278,6 +283,8 @@ const App = () => {
           <Stack.Screen name="detail" component={detailTransaction} />
           <Stack.Screen name="detail_send" component={detailTransactionSend} />
           <Stack.Screen name="send" component={sendScreen} />
+          <Stack.Screen name="topup" component={topUpScreen} />
+          <Stack.Screen name="detail_top_up" component={detailTopUpScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </UserContextProvider>

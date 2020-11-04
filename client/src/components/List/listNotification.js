@@ -33,7 +33,7 @@ export const ListNotification = (props) => {
         <Avatar
           rounded
           size="medium"
-          overlayContainerStyle={{backgroundColor: 'grey'}}
+          overlayContainerStyle={{backgroundColor: color.primary}}
           icon={{
             name: 'email',
             type: 'material-community',
@@ -59,6 +59,7 @@ export const ListNotification = (props) => {
             fontFamily: 'SFPro-Regular',
             fontSize: 12,
             marginLeft: 'auto',
+            color: color.red,
           }}>
           {props.date.split('T')[0] ===
           new Date().toISOString().slice(0, 19).split('T')[0] ? (

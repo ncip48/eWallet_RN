@@ -1,4 +1,4 @@
-const { User, Transaction, Notification } = require("../../models");
+const { User, Transaction, Notification, Topup } = require("../../models");
 var async = require("express-async-await");
 var fetch = require("node-fetch");
 let base64 = require("base-64");
@@ -378,18 +378,18 @@ exports.makeTransaction = async (req, res) => {
 
     const notif_sender = await Notification.create({
       userId: isMe.id,
-      title: `Transaction with ${transaction.trx} has been succesfully sended`,
+      title: `Transaction has been succesfully sended`,
       body: `You has been send money ${ammount} to ${
         userTujuan.first_name + " " + userTujuan.last_name
-      }`,
+      }. Txid: ${transaction.trx}`,
     });
 
     const notif_receiver = await Notification.create({
       userId: userTujuan.id,
-      title: `Transaction with ${transaction2.trx} has been succesfully received`,
+      title: `Transaction has been succesfully received`,
       body: `You has been receive money ${ammount} from ${
         isMe.first_name + " " + isMe.last_name
-      }`,
+      }. Txid: ${transaction2.trx}`,
     });
 
     //send response from login system
@@ -432,9 +432,188 @@ exports.makeTransaction = async (req, res) => {
 
 exports.topUpGojek = async (req, res) => {
   //const ooIfoundData = () => {
+  const { ammount } = req.body;
+  const { id } = req.user;
+  const user = await User.findOne({
+    where: {
+      id,
+    },
+  });
+
+  if (ammount < 50000) {
+    return res.status(500).send({
+      error: {
+        message: "Top-up must be above 50.000 ",
+      },
+    });
+  }
+
+  //define if method gopay
+  const body = {
+    payment_type: "gopay",
+    transaction_details: {
+      gross_amount: ammount,
+      order_id: `gopay-${user.uid}-${Date.now()}`,
+    },
+    gopay: {
+      enable_callback: true,
+      callback_url: "someapps://callback",
+    },
+    customer_details: {
+      email: user.email,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      phone: user.uid,
+      address: user.address,
+    },
+    item_details: {
+      id: "1",
+      price: ammount,
+      quantity: 1,
+      name: `Charge e-wallet with gopay ${ammount}`,
+    },
+  };
+  try {
+    const api = await fetch("https://api.sandbox.midtrans.com/v2/charge", {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization:
+          "Basic " + base64.encode(process.env.SECRET_MIDTRANS + ":" + ""),
+      },
+    });
+    const resdata = await api.json();
+
+    const notif = await Notification.create({
+      userId: user.id,
+      title: `Top-up successfully requested`,
+      body: `You has been request top-up e-wallet ${ammount}`,
+    });
+
+    const topup = await Topup.create({
+      userId: id,
+      notifId: notif.id,
+      txid: resdata.transaction_id,
+      orderid: resdata.order_id,
+      merchantid: resdata.merchant_id,
+      ammount: resdata.gross_amount,
+      date: resdata.transaction_time,
+      status: resdata.transaction_status,
+      qr: resdata.actions[0].url,
+      deeplink: resdata.actions[1].url,
+    });
+
+    if (topup) {
+      res.send({
+        message: resdata.status_message,
+        data: {
+          transaction_id: resdata.transaction_id,
+          order_id: resdata.order_id,
+          merchant_id: resdata.merchant_id,
+          ammount: resdata.gross_amount,
+          date: resdata.transaction_time,
+          status: resdata.transaction_status,
+          qr: resdata.actions[0].url,
+          deeplink: resdata.actions[1].url,
+        },
+      });
+    } else {
+      res.status(500).send({
+        error: {
+          message: "ERROR transaction",
+        },
+      });
+    }
+  } catch (err) {
+    res.status(500).send({
+      error: {
+        message: err.message,
+      },
+    });
+  }
+
+  //};
+  // const ooIprocessData = async () => {
+  //   const github = await oIfoundData();
+  //   const ooiResponseData = await github.json();
+  //   console.log(ooiResponseData);
+  // };
+  //ooIprocessData();
+  //res.end;
+};
+
+exports.topUpStore = async (req, res) => {
+  //const ooIfoundData = () => {
+  const { type, store } = req.query;
+  const { ammount } = req.body;
+  const { id } = req.user;
+  const user = await User.findOne({
+    where: {
+      id,
+    },
+  });
+
+  //define if method gopay
+
+  if (store === "indomaret") {
+    const body = {
+      payment_type: "cstore",
+      transaction_details: {
+        gross_amount: ammount,
+        order_id: `indomaret-${user.uid}-${Date.now()}`,
+      },
+      customer_details: {
+        email: user.email,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        phone: user.uid,
+        address: user.address,
+      },
+      item_details: {
+        id: "1",
+        price: ammount,
+        quantity: 1,
+        name: `Charge e-wallet with indomart ${ammount}`,
+      },
+      cstore: {
+        store: "Indomaret",
+        message: `charge e-wallet ${ammount} to ${user.uid}`,
+      },
+    };
+  } else if (store === "alfamart") {
+    const body = {
+      payment_type: "cstore",
+      transaction_details: {
+        gross_amount: 162500,
+        order_id: `alfamart-${user.uid}-${Date.now()}`,
+      },
+      cstore: {
+        store: "alfamart",
+        alfamart_free_text_1: `charge e-wallet ${ammount}`,
+        alfamart_free_text_2: `for ${user.uid}`,
+        alfamart_free_text_3: "thanks",
+      },
+      customer_details: {
+        email: user.email,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        phone: user.uid,
+        address: user.address,
+      },
+      item_details: {
+        id: "1",
+        price: ammount,
+        quantity: 1,
+        name: `Charge e-wallet with alfamart ${ammount}`,
+      },
+    };
+  }
+
   const api = await fetch("https://api.sandbox.midtrans.com/v2/charge", {
     method: "POST",
-    body: JSON.stringify(req.body),
+    body: JSON.stringify(body),
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",
@@ -447,12 +626,4 @@ exports.topUpGojek = async (req, res) => {
   res.send({
     resdata,
   });
-  //};
-  // const ooIprocessData = async () => {
-  //   const github = await oIfoundData();
-  //   const ooiResponseData = await github.json();
-  //   console.log(ooiResponseData);
-  // };
-  //ooIprocessData();
-  //res.end;
 };
