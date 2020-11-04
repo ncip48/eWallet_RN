@@ -4,7 +4,7 @@ exports.getNotification = async (req, res) => {
   try {
     const { id } = req.user;
     //check user in database based on email inputed
-    const notification = await Notification.findAll({
+    const notifications = await Notification.findAll({
       //   include: {
       //     model: User,
       //     as: "user",
@@ -16,15 +16,16 @@ exports.getNotification = async (req, res) => {
         userId: id,
       },
       attributes: {
-        exclude: ["userId", "createdAt", "updatedAt", "password"],
+        exclude: ["userId", "updatedAt", "password"],
       },
+      order: [["id", "DESC"]],
     });
 
     //send response from login system
     res.send({
       message: "Notification successfully restored",
       data: {
-        notification,
+        notifications,
       },
     });
   } catch (err) {

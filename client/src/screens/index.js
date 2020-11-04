@@ -7,3 +7,4 @@ export * from './homeScreen';
 export * from './detailTransaction';
 export * from './sendScreen';
 export * from './detailTransactionSend';
+export * from './notifScreen';

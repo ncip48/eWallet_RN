@@ -12,7 +12,7 @@ export const loginScreen = (props) => {
   const navigation = useNavigation();
   const [phone, setPhone] = useState('');
   const [message, setErrorMsg] = useState('');
-  const [visible, setVisible] = React.useState(false);
+  const [visible, setVisible] = useState(false);
 
   const onToggleSnackBar = () => setVisible(!visible);
 

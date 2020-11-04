@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {View, Text, StatusBar, FlatList} from 'react-native';
 import {Icon, Header} from 'react-native-elements';
 import {ListItem} from 'react-native-elements';
@@ -10,6 +10,7 @@ import color from '../../utils/color';
 import {styles} from './style';
 import {UserContext} from '../../context/userContext';
 import {API, urlAsset} from '../../config/api';
+import {useIsDrawerOpen} from '@react-navigation/drawer';
 
 function currencyFormat(num) {
   return num.toFixed().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
@@ -20,6 +21,8 @@ export const homeScreen = (props) => {
   const [show, setShow] = useState(false);
   const [state, dispatch] = useContext(UserContext);
   const user = JSON.parse(state.user);
+
+  const isDrawerOpen = useIsDrawerOpen();
 
   const {
     isLoading: loadingProfile,
@@ -74,8 +77,8 @@ export const homeScreen = (props) => {
   return (
     <>
       <StatusBar
-        backgroundColor={color.white}
-        barStyle="dark-content"
+        backgroundColor={isDrawerOpen ? color.primary : color.white}
+        barStyle={isDrawerOpen ? 'light-content' : 'dark-content'}
         translucent={false}
       />
       <Header
@@ -87,7 +90,14 @@ export const homeScreen = (props) => {
             fontFamily: 'SFPro-Bold',
           },
         }}
-        rightComponent={<Icon type="fontisto" name="move-h-a" size={30} />}
+        rightComponent={
+          <Icon
+            type="fontisto"
+            name="move-h-a"
+            size={30}
+            onPress={() => navigation.openDrawer()}
+          />
+        }
         rightContainerStyle={{right: 10}}
         placement="left"
         containerStyle={{backgroundColor: color.white}}

@@ -20,7 +20,7 @@ export const sendScreen = (props) => {
   const navigation = useNavigation();
   const [show, setShow] = useState(false);
   const [state, dispatch] = useContext(UserContext);
-  const [visible, setVisible] = React.useState(false);
+  const [visible, setVisible] = useState(false);
 
   const onToggleSnackBar = () => setVisible(!visible);
 
